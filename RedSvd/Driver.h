@@ -13,6 +13,7 @@ namespace REDSVD {
 	public ref class Driver
 	{
 	public:
-		void Run(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, int rank, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise);
+		void ComputeSvdExact(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise);
+		void ComputeSvdRandomized(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, int rank, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise);
 	};
 }

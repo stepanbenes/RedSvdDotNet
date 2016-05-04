@@ -14,9 +14,8 @@
 using namespace std;
 using namespace Eigen;
 
-void REDSVD::Driver::Run(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, int rank, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise)
+void createMatrixA(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, MatrixXf& A)
 {
-	MatrixXf A;
 	A.resize(numberOfRows, numberOfColumns);
 	int i = 0;
 	for each (cli::array<double>^ row in input)
@@ -27,15 +26,15 @@ void REDSVD::Driver::Run(IEnumerable<cli::array<double>^>^ input, int numberOfRo
 		}
 		i++;
 	}
+}
 
-	// ====================
-	RedSVD retMat(A, rank); // compute
-	// ====================
-	
-	const MatrixXf& U = retMat.matrixU();
-	const VectorXf& S = retMat.singularValues();
-	const MatrixXf& V = retMat.matrixV();
-	
+template <class Svd>
+void assembleOutput(Svd& svd, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise)
+{
+	const MatrixXf& U = svd.matrixU();
+	const VectorXf& S = svd.singularValues();
+	const MatrixXf& V = svd.matrixV();
+
 	singularValues = gcnew cli::array<double>(S.rows());
 
 	// S
@@ -45,7 +44,7 @@ void REDSVD::Driver::Run(IEnumerable<cli::array<double>^>^ input, int numberOfRo
 	}
 
 	U_VT_columnwise = gcnew cli::array<double>(U.rows() * U.cols() + V.cols() * V.rows());
-	
+
 	int index = 0;
 	// U
 	for (int j = 0; j < U.cols(); j++)
@@ -66,4 +65,24 @@ void REDSVD::Driver::Run(IEnumerable<cli::array<double>^>^ input, int numberOfRo
 			index++;
 		}
 	}
+}
+
+void REDSVD::Driver::ComputeSvdExact(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise)
+{
+	MatrixXf A;
+	createMatrixA(input, numberOfRows, numberOfColumns, A);
+	// ====================
+	Eigen::JacobiSVD<Eigen::MatrixXf> svd_exact(A, Eigen::ComputeThinU | Eigen::ComputeThinV); // compute
+	// ====================
+	assembleOutput(svd_exact, singularValues, U_VT_columnwise);
+}
+
+void REDSVD::Driver::ComputeSvdRandomized(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, int rank, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise)
+{
+	MatrixXf A;
+	createMatrixA(input, numberOfRows, numberOfColumns, A);
+	// ====================
+	RedSVD svd_approx(A, rank); // compute
+	// ====================
+	assembleOutput(svd_approx, singularValues, U_VT_columnwise);
 }
