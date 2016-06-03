@@ -27,7 +27,7 @@ using namespace Eigen;
 
 namespace REDSVD {
 
-const double SVD_EPS = 0.0001;
+const double SVD_EPS = 0.000001;
 
 double Util::getSec(){
   //MLM: commented 3
