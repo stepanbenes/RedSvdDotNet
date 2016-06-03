@@ -33,7 +33,7 @@ namespace REDSVD{
 
 namespace {
 
-void writeMatrix_(const string& fn, const MatrixXf& M){
+void writeMatrix_(const string& fn, const MatrixXd& M){
   cout << "write " << fn << endl;
   FILE* outfp = fopen(fn.c_str(), "wb");
   if (outfp == NULL){
@@ -50,7 +50,7 @@ void writeMatrix_(const string& fn, const MatrixXf& M){
   fclose(outfp);
 }
 
-void writeVector_(const string& fn, const VectorXf& V){
+void writeVector_(const string& fn, const VectorXd& V){
   cout << "write " << fn << endl;
   FILE* outfp = fopen(fn.c_str(), "wb");
   if (outfp == NULL){
@@ -70,7 +70,7 @@ void readLine(const string& line,
 
   int id;
   char sep;
-  float val;
+  double val;
   while (is >> id >> sep >> val){
     fv.push_back(make_pair(id, val));
   }
@@ -82,7 +82,7 @@ void readLine(const string& line,
 
 
 
-void readMatrix(const std::string& fn, SMatrixXf& A){
+void readMatrix(const std::string& fn, SMatrixXd& A){
   vector<fv_t> fvs;
   ifstream ifs(fn.c_str());
   if (!ifs){
@@ -98,17 +98,17 @@ void readMatrix(const std::string& fn, SMatrixXf& A){
   Util::convertFV2Mat(fvs, A);
 }
 
-void readMatrix(const std::string& fn, MatrixXf& A){
+void readMatrix(const std::string& fn, MatrixXd& A){
   ifstream ifs(fn.c_str());
   if (!ifs){
     throw string("failed to open " ) + fn;
   }
 
-  vector< vector<float> > vs;
+  vector< vector<double> > vs;
   for (string line; getline(ifs, line); ){
     istringstream is(line);
-    vector<float> v; 
-    float val;
+    vector<double> v; 
+    double val;
     while (is >> val){
       v.push_back(val);
     }

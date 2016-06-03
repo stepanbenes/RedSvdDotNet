@@ -66,7 +66,7 @@ public:
     
     int id;
     char sep;
-    float val;
+    double val;
     while (is >> id >> sep >> val){
       fv.push_back(std::make_pair(id, val));
     }

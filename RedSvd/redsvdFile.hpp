@@ -32,8 +32,8 @@ class RedPCA;
 class RedSymEigen;
 class RedSVDIncr;
 
-void readMatrix(const std::string& fn, SMatrixXf& A);
-void readMatrix(const std::string& fn, Eigen::MatrixXf& A);
+void readMatrix(const std::string& fn, SMatrixXd& A);
+void readMatrix(const std::string& fn, Eigen::MatrixXd& A);
 
 void writeMatrix(const std::string& fn, const RedSVD& A);
 void writeMatrix(const std::string& fn, const RedPCA& A);

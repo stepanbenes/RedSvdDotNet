@@ -79,10 +79,10 @@ void REDSVD::Driver::ComputeSvdExact(IEnumerable<cli::array<double>^>^ input, in
 
 void REDSVD::Driver::ComputeSvdRandomized(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, int rank, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise)
 {
-	//MatrixXf A;
-	//createMatrixA(input, numberOfRows, numberOfColumns, A);
+	MatrixXd A;
+	createMatrixA(input, numberOfRows, numberOfColumns, A);
 	// ====================
-	//RedSVD svd_approx(A, rank); // compute
+	RedSVD svd_approx(A, rank); // compute
 	// ====================
-	//assembleOutput(svd_approx, singularValues, U_VT_columnwise);
+	assembleOutput(svd_approx, singularValues, U_VT_columnwise);
 }

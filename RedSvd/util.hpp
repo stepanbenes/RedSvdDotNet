@@ -29,18 +29,18 @@
 
 namespace REDSVD {
 
-typedef Eigen::SparseMatrix<float, Eigen::RowMajor> SMatrixXf;
-typedef std::vector<std::pair<int, float> > fv_t;
+typedef Eigen::SparseMatrix<double, Eigen::RowMajor> SMatrixXd;
+typedef std::vector<std::pair<int, double> > fv_t;
 
 class Util{
 public:
-  static void convertFV2Mat(const std::vector<fv_t>& fvs, SMatrixXf& A);
-  static void sampleGaussianMat(Eigen::MatrixXf& x);
-  static void processGramSchmidt(Eigen::MatrixXf& mat);
+  static void convertFV2Mat(const std::vector<fv_t>& fvs, SMatrixXd& A);
+  static void sampleGaussianMat(Eigen::MatrixXd& x);
+  static void processGramSchmidt(Eigen::MatrixXd& mat);
   static double getSec();
 
 private:
-  static void sampleTwoGaussian(float& f1, float& f2);
+  static void sampleTwoGaussian(double& f1, double& f2);
 };
 
 }

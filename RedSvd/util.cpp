@@ -27,7 +27,7 @@ using namespace Eigen;
 
 namespace REDSVD {
 
-const float SVD_EPS = 0.0001f;
+const double SVD_EPS = 0.0001;
 
 double Util::getSec(){
   //MLM: commented 3
@@ -38,25 +38,25 @@ double Util::getSec(){
   return 1;
 }
 
-void Util::sampleTwoGaussian(float& f1, float& f2){
-  float v1 = (float)(rand() + 1.f) / ((float)RAND_MAX+2.f);
-  float v2 = (float)(rand() + 1.f) / ((float)RAND_MAX+2.f);
-  float len = sqrt(-2.f * log(v1));
-  f1 = len * cos(2.f * M_PI * v2);
-  f2 = len * sin(2.f * M_PI * v2);
+void Util::sampleTwoGaussian(double& f1, double& f2){
+  double v1 = (double)(rand() + 1.0) / ((double)RAND_MAX+2.0);
+  double v2 = (double)(rand() + 1.0) / ((double)RAND_MAX+2.0);
+  double len = sqrt(-2.0 * log(v1));
+  f1 = len * cos(2.0 * M_PI * v2);
+  f2 = len * sin(2.0 * M_PI * v2);
 }
 
-void Util::sampleGaussianMat(MatrixXf& mat){
+void Util::sampleGaussianMat(MatrixXd& mat){
   for (int i = 0; i < mat.rows(); ++i){
     int j = 0;
     for ( ; j+1 < mat.cols(); j += 2){
-      float f1, f2;
+      double f1, f2;
       sampleTwoGaussian(f1, f2);
       mat(i,j  ) = f1;
       mat(i,j+1) = f2;
     }
     for (; j < mat.cols(); j ++){
-      float f1, f2;
+      double f1, f2;
       sampleTwoGaussian(f1, f2);
       mat(i, j)  = f1;
     }
@@ -64,24 +64,24 @@ void Util::sampleGaussianMat(MatrixXf& mat){
 } 
 
 
-void Util::processGramSchmidt(MatrixXf& mat){
+void Util::processGramSchmidt(MatrixXd& mat){
   for (int i = 0; i < mat.cols(); ++i){
     for (int j = 0; j < i; ++j){
-      float r = mat.col(i).dot(mat.col(j));
+      double r = mat.col(i).dot(mat.col(j));
       mat.col(i) -= r * mat.col(j);
     }
-    float norm = mat.col(i).norm();
+    double norm = mat.col(i).norm();
     if (norm < SVD_EPS){
       for (int k = i; k < mat.cols(); ++k){
     mat.col(k).setZero();
       } 
       return;
     }
-    mat.col(i) *= (1.f / norm);
+    mat.col(i) *= (1.0 / norm);
   }
 }
 
-void Util::convertFV2Mat(const vector<fv_t>& fvs, REDSVD::SMatrixXf& A){
+void Util::convertFV2Mat(const vector<fv_t>& fvs, REDSVD::SMatrixXd& A){
   int maxID = 0;
   size_t nonZeroNum = 0;
   for (size_t i = 0; i < fvs.size(); ++i){

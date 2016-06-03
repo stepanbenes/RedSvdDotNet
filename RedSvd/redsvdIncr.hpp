@@ -42,16 +42,16 @@ public:
   template <class Reader>
   void run(Reader& reader, const int rank){
     int r = (rank < reader.cols()) ? rank : reader.cols();
-    Eigen::MatrixXf O(reader.rows(), r);
+    Eigen::MatrixXd O(reader.rows(), r);
     Util::sampleGaussianMat(O);
 
-    Eigen::MatrixXf Y = Eigen::MatrixXf::Zero(reader.cols(), r);
+    Eigen::MatrixXd Y = Eigen::MatrixXd::Zero(reader.cols(), r);
     for (int row = 0; row < reader.rows(); ++row){
       fv_t fv;
       reader.ReadRow(fv);
       for (size_t i = 0; i < fv.size(); ++i){
         int column = fv[i].first;
-        float val = fv[i].second;
+        double val = fv[i].second;
         for (int j = 0; j < r; ++j){
           Y(column, j) += O(row, j) * val;
         }
@@ -61,13 +61,13 @@ public:
 
     reader.Rewind();
     
-    Eigen::MatrixXf B = Eigen::MatrixXf::Zero(reader.rows(), r);
+    Eigen::MatrixXd B = Eigen::MatrixXd::Zero(reader.rows(), r);
     for (int row = 0; row < reader.rows(); ++row){
       fv_t fv;
       reader.ReadRow(fv);
       for (size_t i = 0; i < fv.size(); ++i){
         int column = fv[i].first;
-        float val = fv[i].second;
+        double val = fv[i].second;
         for (int j = 0; j < r; ++j){
           B(row, j) += val * Y(column, j);
         }
@@ -75,19 +75,19 @@ public:
     }
 
     // Gaussian Random Matrix
-    Eigen::MatrixXf P(B.cols(), r);
+    Eigen::MatrixXd P(B.cols(), r);
     Util::sampleGaussianMat(P);
     
     // Compute Sample Matrix of B
-    Eigen::MatrixXf Z = B * P;
+    Eigen::MatrixXd Z = B * P;
     
     // Orthonormalize Z
     Util::processGramSchmidt(Z);
     
     // Range(C) = Range(B)
-    Eigen::MatrixXf C = Z.transpose() * B; 
+    Eigen::MatrixXd C = Z.transpose() * B; 
     
-    Eigen::JacobiSVD<Eigen::MatrixXf> svdOfC(C, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    Eigen::JacobiSVD<Eigen::MatrixXd> svdOfC(C, Eigen::ComputeThinU | Eigen::ComputeThinV);
     
     // C = USV^T
     // A = Z * U * S * V^T * Y^T()
@@ -96,22 +96,22 @@ public:
     matV_ = Y * svdOfC.matrixV();
   }
   
-  const Eigen::MatrixXf& matrixU() const {
+  const Eigen::MatrixXd& matrixU() const {
     return matU_;
   }
 
-  const Eigen::VectorXf& singularValues() const {
+  const Eigen::VectorXd& singularValues() const {
     return matS_;
   }
 
-  const Eigen::MatrixXf& matrixV() const {
+  const Eigen::MatrixXd& matrixV() const {
     return matV_;
   }
 
 private:
-  Eigen::MatrixXf matU_;
-  Eigen::VectorXf matS_;
-  Eigen::MatrixXf matV_;
+  Eigen::MatrixXd matU_;
+  Eigen::VectorXd matS_;
+  Eigen::MatrixXd matV_;
 };
 
 }
