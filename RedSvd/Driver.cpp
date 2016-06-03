@@ -14,7 +14,7 @@
 using namespace std;
 using namespace Eigen;
 
-void createMatrixA(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, MatrixXf& A)
+void createMatrixA(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, MatrixXd& A)
 {
 	A.resize(numberOfRows, numberOfColumns);
 	int i = 0;
@@ -31,9 +31,9 @@ void createMatrixA(IEnumerable<cli::array<double>^>^ input, int numberOfRows, in
 template <class Svd>
 void assembleOutput(Svd& svd, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise)
 {
-	const MatrixXf& U = svd.matrixU();
-	const VectorXf& S = svd.singularValues();
-	const MatrixXf& V = svd.matrixV();
+	const MatrixXd& U = svd.matrixU();
+	const VectorXd& S = svd.singularValues();
+	const MatrixXd& V = svd.matrixV();
 
 	singularValues = gcnew cli::array<double>(S.rows());
 
@@ -69,20 +69,20 @@ void assembleOutput(Svd& svd, [Out] cli::array<double>^% singularValues, [Out] c
 
 void REDSVD::Driver::ComputeSvdExact(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise)
 {
-	MatrixXf A;
+	MatrixXd A;
 	createMatrixA(input, numberOfRows, numberOfColumns, A);
 	// ====================
-	Eigen::JacobiSVD<Eigen::MatrixXf> svd_exact(A, Eigen::ComputeThinU | Eigen::ComputeThinV); // compute
+	Eigen::JacobiSVD<Eigen::MatrixXd/*, Eigen::NoQRPreconditioner*/> svd_exact(A, Eigen::ComputeThinU | Eigen::ComputeThinV); // compute
 	// ====================
 	assembleOutput(svd_exact, singularValues, U_VT_columnwise);
 }
 
 void REDSVD::Driver::ComputeSvdRandomized(IEnumerable<cli::array<double>^>^ input, int numberOfRows, int numberOfColumns, int rank, [Out] cli::array<double>^% singularValues, [Out] cli::array<double>^% U_VT_columnwise)
 {
-	MatrixXf A;
-	createMatrixA(input, numberOfRows, numberOfColumns, A);
+	//MatrixXf A;
+	//createMatrixA(input, numberOfRows, numberOfColumns, A);
 	// ====================
-	RedSVD svd_approx(A, rank); // compute
+	//RedSVD svd_approx(A, rank); // compute
 	// ====================
-	assembleOutput(svd_approx, singularValues, U_VT_columnwise);
+	//assembleOutput(svd_approx, singularValues, U_VT_columnwise);
 }
